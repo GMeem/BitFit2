@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class LogFragment : Fragment() {
 
-    private lateinit var sleeps: MutableList<Sleep>
+    private var sleeps = mutableListOf <Sleep>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,9 +24,7 @@ class LogFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_log, container, false)
-
         val sleepsRv = view.findViewById<RecyclerView>(R.id.sleepsRv)
-        sleeps = mutableListOf()
         val adapter = SleepAdapter(sleeps)
 
         lifecycleScope.launch {
