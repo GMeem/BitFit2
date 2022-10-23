@@ -25,7 +25,7 @@ class LogFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_log, container, false)
         val sleepsRv = view.findViewById<RecyclerView>(R.id.sleepsRv)
-        val adapter = SleepAdapter(sleeps)
+        val adapter = SleepAdapter(sleeps.asReversed())
 
         lifecycleScope.launch {
             (activity?.application as SleepApplication).db.sleepDao().getAll().collect { databaseList ->
