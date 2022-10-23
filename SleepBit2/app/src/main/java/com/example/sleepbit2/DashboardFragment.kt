@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.w3c.dom.Text
 
 
 class DashboardFragment : Fragment() {
@@ -19,6 +19,8 @@ class DashboardFragment : Fragment() {
     private lateinit var avgSleep: TextView
     private lateinit var minSleep: TextView
     private lateinit var maxSleep: TextView
+    private lateinit var clearData: Button
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +36,7 @@ class DashboardFragment : Fragment() {
         avgSleep = view.findViewById(R.id.avg_sleep)
         minSleep = view.findViewById(R.id.min_sleep)
         maxSleep = view.findViewById(R.id.max_sleep)
+        clearData = view.findViewById(R.id.clearBtn)
 
         lifecycleScope.launch {
             (activity?.application as SleepApplication).db.sleepDao().getAll().collect { databaseList ->
@@ -49,6 +52,13 @@ class DashboardFragment : Fragment() {
                     calculateStats(sleeps)
                 }
             }
+
+        }
+        clearData.setOnClickListener{
+            lifecycleScope.launch(Dispatchers.IO){
+                (activity?.application as SleepApplication).db.sleepDao().deleteAll()
+            }
+
         }
         return view
     }
@@ -69,13 +79,16 @@ class DashboardFragment : Fragment() {
                     max = sleepHours
                 }
             }
+            var avg = total.toDouble()/sleeps.count()
+            avg = String.format("%.1f", avg).toDouble()
+            avgSleep.text = "$avg hours"
+            minSleep.text = "$min hours"
+            maxSleep.text = "$max hours"
+        }else{
+            avgSleep.text = "0 hours"
+            minSleep.text = "0 hours"
+            maxSleep.text = "0 hours"
         }
-
-        var avg = total.toFloat()/sleeps.count()
-        avgSleep.text = "$avg hours"
-        minSleep.text = "$min hours"
-        maxSleep.text = "$max hours"
-
     }
 
     companion object {
